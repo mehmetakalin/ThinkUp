@@ -119,9 +119,13 @@ abstract class CollectionAbstract implements \IteratorAggregate, \ArrayAccess, \
      * @access protected
      */
     protected function convertData( $object ) {
+        //Need to strip leading slash for the anon function to work on some setups
+        //Instagram\User versus \Instagram\User
+        //at least PHP 5.3.2-1ubuntu4.22 with Suhosin-Patch (cli)
+        $object_compat = substr($object, 1);
         $this->data = array_map(
-            function( $c ) use( $object ) {
-                return new $object( $c );
+            function( $c ) use( $object_compat ) {
+                return new $object_compat( $c );
             },
             $this->data
         );
